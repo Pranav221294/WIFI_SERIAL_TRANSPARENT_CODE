@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "type_traits": "cpp",
+        "cstddef": "cpp",
+        "algorithm": "cpp"
+    }
+}

@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"name": "Wireless_Serial",
+			"path": "..\\..\\..\\Transparent_Wifi_Serial_Code_header_files\\Wireless_Serial"
+		}
+	],
+	"settings": {}
+}
