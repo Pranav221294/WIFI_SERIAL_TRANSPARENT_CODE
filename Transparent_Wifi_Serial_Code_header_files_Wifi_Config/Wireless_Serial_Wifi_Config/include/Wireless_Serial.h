@@ -26,3 +26,5 @@ void tcp_client_on();
 char* getTcpReadData();
 void settcprecvstate(e_tcp_reve_data state);
 e_tcp_reve_data gettcprecvstate(void);
+unsigned int baud_r();
+unsigned int packet_length();

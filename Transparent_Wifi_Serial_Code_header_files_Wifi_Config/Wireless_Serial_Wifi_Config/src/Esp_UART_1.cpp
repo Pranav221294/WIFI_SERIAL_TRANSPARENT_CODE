@@ -4,13 +4,21 @@
 #include <stdio.h>
 #include <string.h>
 #include "Esp_UART_1.h"
+#include "Wireless_Serial.h"
 
 static intr_handle_t handle_console;
 int8_t rxbuf_1[256];
 uint16_t urxlen;
 uint8_t uart_f_1 = 0;
+static int baud_rate_1 ;
 
 e_UART_1_reve_data UART_1_data_status = e_UART_1_no_data;
+/****************************************************************
+ * Function Name: uart_intr_handle
+ * Description: Interrupt handler for UART1
+ * Parameters: void *arg - pointer to void argument
+ * Return: none
+ ***************************************************************/
 
 void IRAM_ATTR uart_intr_handle(void *arg)
 {
@@ -27,7 +35,7 @@ void IRAM_ATTR uart_intr_handle(void *arg)
  UART1.int_clr.rxfifo_full = 1; //clear RX full interrupt
  UART1.int_clr.rxfifo_tout = 1; //clear RX timeout interrupt
  uart_f_1 = 1;
- setUART1recvstate(e_UART_1_data_coming);
+ setUART1recvstate(e_UART_1_data_coming);//Set the flag 
  //uart_write_bytes(EX_UART_NUM, (const char*)rxbuf_1, i);
 //  //Serial.println("LEN= ");Serial.println(UART2_data_length);
  
@@ -37,11 +45,29 @@ void IRAM_ATTR uart_intr_handle(void *arg)
   //memset(rxbuf_1, '\0', i); 
 }
 
+/**************************************************************
+ * Function: UART_1_init()
+ * ------------------------
+ * Initializes UART1 with the specified baud rate, data bits, 
+ * parity, stop bits, and flow control. The UART pins are set
+ * to GPIO4 (RX) and GPIO5 (TX). The UART driver is installed
+ * with a buffer size of BUF_SIZE_1*2 and a pre-registered
+ * ISR is freed. A new ISR is registered with the IRAM flag set,
+ * and the RX interrupt is enabled.
+ **************************************************************/
+
+
 void UART_1_init()
 {
+ 
+  baud_rate_1 = baud_r();
+  Serial.println("baud_rate_1");
+  Serial.println(baud_rate_1);
+  if(baud_rate_1 == 0) baud_rate_1 = 115200;
+    
 	 uart_config_t uart_config =
   {
-    .baud_rate = 115200,
+    .baud_rate = baud_rate_1,
    // .baud_rate = 19200,
     .data_bits = UART_DATA_8_BITS,
     .parity = UART_PARITY_DISABLE,
@@ -60,8 +86,12 @@ void UART_1_init()
 	
 }
 
-char* get_UART_1_Read_Data()
+
+
+char* get_UART_1_Read_Data()// Read function UART 1 data in interrupt
 {
+  
+   
   static char str[128];
   snprintf(str, sizeof(str), "%s", (const char*)rxbuf_1);
   memset(rxbuf_1, 0, sizeof(rxbuf_1)); // clear UART2_data
@@ -69,12 +99,12 @@ char* get_UART_1_Read_Data()
  
 }
 
-void setUART1recvstate(e_UART_1_reve_data state)
+void setUART1recvstate(e_UART_1_reve_data state)//Using to set flag to receive data using enum
 {
     UART_1_data_status = state ;
 }
 
-e_UART_1_reve_data getUART1recvstate(void)
+e_UART_1_reve_data getUART1recvstate(void)//Using to get flag to receive data using enum
 {
     return UART_1_data_status ;
 }

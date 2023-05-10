@@ -50,12 +50,14 @@ void setup()
 {
   Serial.begin(115200);
   
-   UART_1_init();
-   UART_2_init();
-   //preferences.begin("wifi_config", false);
    wifi_restore_config();// it will retrive from info from eeprom
    convert_wifi_parma_read_running_mode();
    wifi_connection();
+
+   UART_1_init();
+   UART_2_init();
+ 
+  
    
        
    
@@ -142,21 +144,21 @@ void loop()
             setButtonState(e_buttonNotCickedInitial);
          
           }
-        if(millis()-connection_ckeck_milli_1>MAX_CONNECTED_TIMEOUT)
-           {
-             count12++;Serial.println("count");Serial.println(count12);
-             if(count12 > 10)
-             {
-              state = e_main_app;
-               tcp_client_on();
-               Serial.println(connection_ckeck_milli_1);
-               Serial.println("main");
-                count12 = 0;
-                ESP.restart();
+        // if(millis()-connection_ckeck_milli_1>MAX_CONNECTED_TIMEOUT)
+        //    {
+        //      count12++;Serial.println("count");Serial.println(count12);
+        //      if(count12 > 10)
+        //      {
+        //       state = e_main_app;
+        //        tcp_client_on();
+        //        Serial.println(connection_ckeck_milli_1);
+        //        Serial.println("main");
+        //         count12 = 0;
+        //         ESP.restart();
                 
-             }
+        //      }
 
-           }  
+        //    }  
     
     break;
 

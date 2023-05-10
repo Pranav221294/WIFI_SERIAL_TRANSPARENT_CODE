@@ -27,7 +27,7 @@ static void Wifi_Config_Rx(void)
   char* my_string; 
   char ch1 ;
   char ch2 ;
-  
+  char mac_addr[18];
   my_string = get_string();
 
  ch1 = my_string[2]; 
@@ -70,7 +70,9 @@ static void Wifi_Config_Rx(void)
        combined = 0;
        break;
    case ((int)'0' << 8) | '6':
-        extract_name((const char*) my_string, wifi_write_cmd.MAC_Addr) ;
+       // extract_name((const char*) my_string, wifi_write_cmd.MAC_Addr) ;
+        strcpy(mac_addr, WiFi.macAddress().c_str());
+        strcpy(wifi_write_cmd.MAC_Addr, mac_addr);
         Serial.print("MAC Addr ");
         Serial.println(wifi_write_cmd.MAC_Addr);
         combined = 0;

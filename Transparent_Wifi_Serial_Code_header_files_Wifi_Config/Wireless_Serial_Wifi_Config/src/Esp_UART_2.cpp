@@ -2,16 +2,17 @@
 #include <WiFi.h>
 #include "driver/uart.h"
 #include "Esp_UART_2.h"
-
+#include "Wireless_Serial.h"
 uint8_t rxbuf[256];     //Buffer di ricezione
 uint16_t rx_fifo_len;        //Lunghezza dati
 uint8_t UART2_data[128];
 QueueHandle_t uart2_queue;
 uint8_t uart_f_2 = 0;
+
 void UART_2_init()
 {
 
- 
+     
  //Configuro la porta Serial2 (tutti i parametri hanno anche un get per effettuare controlli)
     uart_config_t Configurazione_UART2 = 
     {
