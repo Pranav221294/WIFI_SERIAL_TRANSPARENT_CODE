@@ -14,3 +14,5 @@ void UART_1_init();
 char* get_UART_1_Read_Data();
 void setUART1recvstate(e_UART_1_reve_data state);
 e_UART_1_reve_data getUART1recvstate(void);
+void disable_UART();
+void UART_1_deinit();

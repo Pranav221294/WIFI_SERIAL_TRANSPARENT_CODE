@@ -348,7 +348,7 @@ void wifi_connection()
    WiFi.begin(WIFI_NETWORK, WIFI_PASSWORD);// Setting USEr ID n password (initlsation)
     
     unsigned long startTime = millis();
-while (WiFi.status() != WL_CONNECTED && millis() - startTime < 20000)// every 20 sec wifi connection
+while (WiFi.status() != WL_CONNECTED && millis() - startTime < 10000)// every 20 sec wifi connection
  {
     Serial.println("Connecting to WiFi...");
     delay(1000);
@@ -358,6 +358,8 @@ while (WiFi.status() != WL_CONNECTED && millis() - startTime < 20000)// every 20
   if (WiFi.status() != WL_CONNECTED)
    {
     Serial.println("Failed to connect to WiFi network.");
+     UART_1_init();
+   UART_2_init();
     // Take some action, such as restarting the device or trying again later
   } 
   else
@@ -379,7 +381,8 @@ while (WiFi.status() != WL_CONNECTED && millis() - startTime < 20000)// every 20
     tcpClient.connect( serverIP , port );//It used to connect paritcular TCP server and port
 
     WiFi.onEvent(wifiEventHandler);// If wifi is connected it check connection every 30 sec
-    
+     UART_1_init();
+    UART_2_init();
 
 
     // Do other things, such as connecting to a server, etc.

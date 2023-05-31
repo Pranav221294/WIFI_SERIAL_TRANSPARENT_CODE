@@ -43,6 +43,8 @@ void IRAM_ATTR uart_intr_handle(void *arg)
 //                 for(byte j=0; j<i;j++) Serial.print((char)rxbuf_1[i]);
 //                 Serial.println("");
   //memset(rxbuf_1, '\0', i); 
+
+
 }
 
 /**************************************************************
@@ -107,4 +109,16 @@ void setUART1recvstate(e_UART_1_reve_data state)//Using to set flag to receive d
 e_UART_1_reve_data getUART1recvstate(void)//Using to get flag to receive data using enum
 {
     return UART_1_data_status ;
+}
+
+void disable_UART()
+{
+  uart_disable_rx_intr(EX_UART_NUM); // Disable RX interrupt
+}
+
+void UART_1_deinit()
+{
+  uart_disable_rx_intr(EX_UART_NUM); // Disable RX interrupt
+  uart_isr_free(EX_UART_NUM); // Free the ISR
+  uart_driver_delete(EX_UART_NUM); // Delete the UART driver and release resources
 }

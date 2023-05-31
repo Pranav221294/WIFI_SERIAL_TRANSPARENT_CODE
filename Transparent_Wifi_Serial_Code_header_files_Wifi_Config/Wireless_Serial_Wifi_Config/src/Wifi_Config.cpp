@@ -13,7 +13,7 @@ Wifi_Param_String wifi_read_cmd;
 Wifi_Param_String wifi_read_cmd_for_GUI;
 
  extern uint8_t hello;
-   
+char wifi_send_buff[400];
 buttonClick_type eButtonClick = e_buttonNotCickedInitial;
 static unsigned long int connection_ckeck_milli;
 extern Preferences preferences;
@@ -29,7 +29,8 @@ static void Wifi_Config_Rx(void)
   char ch2 ;
   char mac_addr[18];
   my_string = get_string();
-
+ 
+ // Serial.println( my_string);
  ch1 = my_string[2]; 
  ch2 = my_string[3];
 
@@ -167,38 +168,91 @@ void wifi_restore_config()
 }
 
 
+// void wifi_restore_config_to_GUI()
+// {
+//   preferences.begin("wifi_config", false);    
+//  preferences.getBytes("config", &wifi_read_cmd, sizeof(wifi_read_cmd));
+//  preferences.end();
+
+//  sprintf(wifi_read_cmd_for_GUI.Wifi_User_ID,"@RWU,%s#\r\n",wifi_read_cmd.Wifi_User_ID);
+//  uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.Wifi_User_ID, strlen(wifi_read_cmd_for_GUI.Wifi_User_ID));
+//  //delay(50);
+//  sprintf(wifi_read_cmd_for_GUI.Wifi_Password,"@RWP,%s#\r\n",wifi_read_cmd.Wifi_Password);
+//  uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.Wifi_Password, strlen(wifi_read_cmd_for_GUI.Wifi_Password));
+//  //delay(50);
+//  sprintf(wifi_read_cmd_for_GUI.TCP_Server_IP,"@RTS,%s#\r\n",wifi_read_cmd.TCP_Server_IP);
+//  uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.TCP_Server_IP, strlen(wifi_read_cmd_for_GUI.TCP_Server_IP));
+//  //delay(50);
+//  sprintf(wifi_read_cmd_for_GUI.TCP_Client_IP,"@RTC,%s#\r\n",wifi_read_cmd.TCP_Client_IP);
+//  uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.TCP_Client_IP, strlen(wifi_read_cmd_for_GUI.TCP_Client_IP));
+//  //delay(50);
+// sprintf(wifi_read_cmd_for_GUI.TCP_Port,"@RTP,%s#\r\n",wifi_read_cmd.TCP_Port);
+// uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.TCP_Port, strlen(wifi_read_cmd_for_GUI.TCP_Port));
+// //delay(50);
+// sprintf(wifi_read_cmd_for_GUI.MAC_Addr,"@RMC,%s#\r\n",wifi_read_cmd.MAC_Addr);
+// uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.MAC_Addr, strlen(wifi_read_cmd_for_GUI.MAC_Addr));
+// //delay(50);
+// sprintf(wifi_read_cmd_for_GUI.Wifi_Packet_length,"@RPL,%s#\r\n",wifi_read_cmd.Wifi_Packet_length);
+// uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.Wifi_Packet_length, strlen(wifi_read_cmd_for_GUI.Wifi_Packet_length));
+// //delay(50);
+// sprintf(wifi_read_cmd_for_GUI.Baud_rate,"@RBR,%s#\r\n",wifi_read_cmd.Baud_rate);
+// uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.Baud_rate, strlen(wifi_read_cmd_for_GUI.Baud_rate));
+// //delay(50);
+// memset(&wifi_read_cmd_for_GUI, 0, sizeof(wifi_read_cmd_for_GUI));
+//  memset(&wifi_read_cmd, 0, sizeof(wifi_read_cmd));
+
+// }
+
 void wifi_restore_config_to_GUI()
 {
   preferences.begin("wifi_config", false);    
  preferences.getBytes("config", &wifi_read_cmd, sizeof(wifi_read_cmd));
  preferences.end();
 
- sprintf(wifi_read_cmd_for_GUI.Wifi_User_ID,"@RWU,%s#\r\n\0",wifi_read_cmd.Wifi_User_ID);
- uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.Wifi_User_ID, strlen(wifi_read_cmd_for_GUI.Wifi_User_ID));
+ sprintf(wifi_read_cmd_for_GUI.Wifi_User_ID,"@RWU,%s",wifi_read_cmd.Wifi_User_ID);
+ strcat(wifi_send_buff,wifi_read_cmd_for_GUI.Wifi_User_ID);//GIS MAPPING//3
+ strcat(wifi_send_buff, "$"); 
+
+ sprintf(wifi_read_cmd_for_GUI.Wifi_Password,"RWP,%s",wifi_read_cmd.Wifi_Password);
+ strcat(wifi_send_buff,wifi_read_cmd_for_GUI.Wifi_Password);//GIS MAPPING//3
+ strcat(wifi_send_buff, "$"); 
  
- sprintf(wifi_read_cmd_for_GUI.Wifi_Password,"@RWP,%s#\r\n\0",wifi_read_cmd.Wifi_Password);
- uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.Wifi_Password, strlen(wifi_read_cmd_for_GUI.Wifi_Password));
+ sprintf(wifi_read_cmd_for_GUI.TCP_Server_IP,"RTS,%s",wifi_read_cmd.TCP_Server_IP);
+ strcat(wifi_send_buff,wifi_read_cmd_for_GUI.TCP_Server_IP);//GIS MAPPING//3
+ strcat(wifi_send_buff, "$"); 
  
- sprintf(wifi_read_cmd_for_GUI.TCP_Server_IP,"@RTS,%s#\r\n\0",wifi_read_cmd.TCP_Server_IP);
- uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.TCP_Server_IP, strlen(wifi_read_cmd_for_GUI.TCP_Server_IP));
 
- sprintf(wifi_read_cmd_for_GUI.TCP_Client_IP,"@RTC,%s#\r\n\0",wifi_read_cmd.TCP_Client_IP);
- uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.TCP_Client_IP, strlen(wifi_read_cmd_for_GUI.TCP_Client_IP));
 
-sprintf(wifi_read_cmd_for_GUI.TCP_Port,"@RTP,%s#\r\n\0",wifi_read_cmd.TCP_Port);
-uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.TCP_Port, strlen(wifi_read_cmd_for_GUI.TCP_Port));
+sprintf(wifi_read_cmd_for_GUI.TCP_Client_IP,"RTC,%s",wifi_read_cmd.TCP_Client_IP);
+strcat(wifi_send_buff,wifi_read_cmd_for_GUI.TCP_Client_IP);//GIS MAPPING//3
+strcat(wifi_send_buff, "$"); 
 
-sprintf(wifi_read_cmd_for_GUI.MAC_Addr,"@RMC,%s#\r\n\0",wifi_read_cmd.MAC_Addr);
-uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.MAC_Addr, strlen(wifi_read_cmd_for_GUI.MAC_Addr));
 
-sprintf(wifi_read_cmd_for_GUI.Wifi_Packet_length,"@RPL,%s#\r\n\0",wifi_read_cmd.Wifi_Packet_length);
-uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.Wifi_Packet_length, strlen(wifi_read_cmd_for_GUI.Wifi_Packet_length));
+sprintf(wifi_read_cmd_for_GUI.TCP_Port,"RTP,%s",wifi_read_cmd.TCP_Port);
+strcat(wifi_send_buff,wifi_read_cmd_for_GUI.TCP_Port);//GIS MAPPING//3
+strcat(wifi_send_buff, "$"); 
 
-sprintf(wifi_read_cmd_for_GUI.Baud_rate,"@RBR,%s#\r\n\0",wifi_read_cmd.Baud_rate);
-uart_write_bytes(UART_NUM_2, (const char*)wifi_read_cmd_for_GUI.Baud_rate, strlen(wifi_read_cmd_for_GUI.Baud_rate));
+
+
+sprintf(wifi_read_cmd_for_GUI.MAC_Addr,"RMC,%s",wifi_read_cmd.MAC_Addr);
+strcat(wifi_send_buff,wifi_read_cmd_for_GUI.MAC_Addr);//GIS MAPPING//3
+strcat(wifi_send_buff, "$"); 
+
+
+sprintf(wifi_read_cmd_for_GUI.Wifi_Packet_length,"RPL,%s",wifi_read_cmd.Wifi_Packet_length);
+strcat(wifi_send_buff,wifi_read_cmd_for_GUI.Wifi_Packet_length);//GIS MAPPING//3
+strcat(wifi_send_buff, "$"); 
+
+
+sprintf(wifi_read_cmd_for_GUI.Baud_rate,"RBR,%s",wifi_read_cmd.Baud_rate);
+strcat(wifi_send_buff,wifi_read_cmd_for_GUI.Baud_rate);//GIS MAPPING//3
+strcat(wifi_send_buff, "#\r\n"); 
+uart_write_bytes(UART_NUM_2, (const char*)wifi_send_buff, strlen(wifi_send_buff));
+
+memset(wifi_send_buff, 0, sizeof(wifi_send_buff));
 
 memset(&wifi_read_cmd_for_GUI, 0, sizeof(wifi_read_cmd_for_GUI));
- memset(&wifi_read_cmd, 0, sizeof(wifi_read_cmd));
+memset(&wifi_read_cmd, 0, sizeof(wifi_read_cmd));
 
 }
 

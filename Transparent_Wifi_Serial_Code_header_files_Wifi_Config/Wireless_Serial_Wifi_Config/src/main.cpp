@@ -39,7 +39,10 @@ extern uint8_t uart_f_2;
 extern char tcp_read[256];
 
 unsigned int count12  = 0;
-const char* MSG = "@OK#\r\n";
+const char* MSG = "@OKOK#\r\n";
+const char* SAVEMSG = "@SAVEDMEM#\r\n";
+const char* CLEARMSG = "@CLEARMEM#\r\n";
+const char* STARTWIFICONFIG = "@STARTWIFICONFIG#\r\n";
 Preferences preferences;
 unsigned long int connection_ckeck_milli_1;
 
@@ -57,7 +60,7 @@ void setup()
    UART_1_init();
    UART_2_init();
  
-  
+   uart_write_bytes(UART_NUM_2,(const char*)STARTWIFICONFIG, strlen(STARTWIFICONFIG));
    
        
    
@@ -75,7 +78,7 @@ void setup()
 
    // tcpClient.connect( serverIP , port );
 
-    WiFi.onEvent(wifiEventHandler);
+  
     
 }
 
@@ -92,10 +95,12 @@ void loop()
         tcp_data_status_f = gettcprecvstate();
         UART_1_data_status_f =  getUART1recvstate();
 
-        if(ebutton_in_main == e_buttonStartWifiConfig)
+        if(ebutton_in_main == e_buttonStartWifiConfig)// want to off uart 1
            {
               state = e_wifi_config;
               tcp_client_off(); 
+              UART_1_deinit();
+
               uart_write_bytes(UART_NUM_2,(const char*)MSG, strlen(MSG));
               setButtonState(e_buttonNotCickedInitial);
            }
@@ -103,6 +108,7 @@ void loop()
          {
              tcp_uart_str = getTcpReadData();
              uart_tx_chars(EX_UART_NUM, tcp_uart_str, strlen(tcp_uart_str));
+             memset(tcp_uart_str, 0, sizeof(tcp_uart_str));
              settcprecvstate(e_tcp_no_data);
 
          }
@@ -117,6 +123,13 @@ void loop()
             setUART1recvstate(e_UART_1_no_data);
 
           }
+          if(ebutton_in_main == e_buttonReadMemory)
+          {
+           
+            wifi_restore_config_to_GUI();
+            setButtonState(e_buttonNotCickedInitial);
+         
+          }
       
     break;
   case e_wifi_config:   
@@ -129,13 +142,16 @@ void loop()
            wifi_save_config();
            state = e_main_app;
            setButtonState(e_buttonNotCickedInitial);
+           uart_write_bytes(UART_NUM_2,(const char*)SAVEMSG, strlen(SAVEMSG));
            Serial.println("e_main_app");
             ESP.restart();
        }
        if(ebutton_in_main == e_buttonClearMemory)
        {
            clear_wifi_config_mem();
+           uart_write_bytes(UART_NUM_2,(const char*)CLEARMSG, strlen(CLEARMSG));
            setButtonState(e_buttonNotCickedInitial);
+
        }
        if(ebutton_in_main == e_buttonReadMemory)
           {
