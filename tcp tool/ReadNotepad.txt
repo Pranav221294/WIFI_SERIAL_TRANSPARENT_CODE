@@ -1,0 +1,2 @@
+Copy tcpconfig folder in C:Drive
+Create shortcut of Wifi Configuration(Application Part) On Desktop from Debug Folder.
